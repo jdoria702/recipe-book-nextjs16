@@ -1,8 +1,13 @@
 import React from 'react'
 import { SAMPLE_RECIPES } from '@/lib/recipes'
 import RecipeCard from '@/components/RecipeCard';
+import { IRecipe } from '@/database/recipe.model';
 
-const Home = () => {
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+
+const Home = async () => {
+  const response = await fetch(`${BASE_URL}/api/recipes`)
+  const { recipes } = await response.json();
   return (
     <section>
       <h1 className="text-center">Your Recipes, All in One</h1>
@@ -10,8 +15,10 @@ const Home = () => {
       <div className="mt-20 space-y-7">
         <h3>Favorites</h3>
         <ul className="recipes">
-          {SAMPLE_RECIPES.map((recipe) => (
-            <RecipeCard key={recipe.slug} {...recipe} />
+          {recipes && recipes.length > 0 && recipes.map((recipe: IRecipe) => (
+            <li key={recipe.title} className="list-none">
+              <RecipeCard { ...recipe } />
+            </li>
           ))}
         </ul>
       </div>
