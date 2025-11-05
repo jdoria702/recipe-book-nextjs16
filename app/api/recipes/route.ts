@@ -112,8 +112,11 @@ export async function GET() {
   } catch (e) {
     console.error('Error fetching recipes:', e);
     return NextResponse.json(
-      { message: 'Failed to fetch recipes', error: e },
-      { status: 400 }
+      {
+        message: 'Failed to fetch recipes',
+        error: e instanceof Error ? e.message : 'Unknown error',
+      },
+      { status: 500 }
     );
   }
 }

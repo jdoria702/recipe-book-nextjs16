@@ -1,12 +1,29 @@
 import React from 'react'
+import { headers } from 'next/headers'
 import { SAMPLE_RECIPES } from '@/lib/recipes'
 import RecipeCard from '@/components/RecipeCard';
 import { IRecipe } from '@/database/recipe.model';
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-
 const Home = async () => {
-  const response = await fetch(`${BASE_URL}/api/recipes`)
+  // Build safe base URL with fallbacks
+  let baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+  
+  if (!baseUrl) {
+    const headersList = await headers();
+    const host = headersList.get('host');
+    const protocol = headersList.get('x-forwarded-proto') || 
+                     (process.env.NODE_ENV === 'production' ? 'https' : 'http');
+    
+    if (host) {
+      baseUrl = `${protocol}://${host}`;
+    } else {
+      baseUrl = 'http://localhost:3000';
+    }
+  }
+  
+  const response = await fetch(`${baseUrl}/api/recipes`, {
+    cache: 'no-store'
+  })
   const { recipes } = await response.json();
   return (
     <section>
