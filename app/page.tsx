@@ -5,20 +5,12 @@ import RecipeCard from '@/components/RecipeCard';
 import { IRecipe } from '@/database/recipe.model';
 
 const Home = async () => {
-  // Build safe base URL with fallbacks
-  let baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-  
+  const baseUrl =
+    process.env.NEXT_PUBLIC_BASE_URL ??
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined) ??
+    (process.env.NODE_ENV !== 'production' ? 'http://localhost:3000' : undefined);
   if (!baseUrl) {
-    const headersList = await headers();
-    const host = headersList.get('host');
-    const protocol = headersList.get('x-forwarded-proto') || 
-                     (process.env.NODE_ENV === 'production' ? 'https' : 'http');
-    
-    if (host) {
-      baseUrl = `${protocol}://${host}`;
-    } else {
-      baseUrl = 'http://localhost:3000';
-    }
+    throw new Error('Base URL is not configured');
   }
   
   const response = await fetch(`${baseUrl}/api/recipes`, {
@@ -28,7 +20,7 @@ const Home = async () => {
   return (
     <section>
       <h1 className="text-center">Your Recipes, All in One</h1>
-      <p className="text-center mt-5">View the catalog from recipes you'll want to create</p>
+      <p className="text-center mt-5">View the catalog from recipes you&apos;ll want to create</p>
       <div className="mt-20 space-y-7">
         <h3>Favorites</h3>
         <ul className="recipes">
