@@ -12,7 +12,9 @@ const Navbar = () => {
             </Link>
 
             <ul>
-                <Link href='/'>Add Your Recipe</Link>
+                <Link href='/add-recipe' className='flex items-center gap-2'>
+                  <Image src="/icons/add.png" alt="add-recipe" width={24} height={24} />
+                </Link>
             </ul>
         </nav>
     </header>
